@@ -25,7 +25,7 @@ BuildRequires:  xulrunner-devel >= %{gecko_version}
 # NetworkManager
 #gw disabled, it is in contrib
 #BuildRequires:  NetworkManager-devel
-#BuildRequires:  dbus-devel
+BuildRequires:  dbus-glib-devel
 # webkit (gtk)
 BuildRequires:  webkitgtk-devel
 # kde

@@ -18,12 +18,6 @@ Patch2:		libproxy-0.2.3-format-strings.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  python-devel
-#Virtual Provides - We need either mozjs or WebKit
-Requires: %{name}-pac >= %{version}
-#
-Requires: libproxy-python = %{version}-%{release}
-Requires: libproxy-bin = %{version}-%{release}
-
 # gnome
 BuildRequires:  libGConf2-devel
 # mozjs
@@ -52,6 +46,11 @@ libproxy offers the following features:
 %package -n %libname
 Group:System/Libraries
 Summary:        A library handling all the details of proxy configuration
+#Virtual Provides - We need either mozjs or WebKit
+Requires: %{name}-pac >= %{version}
+#
+Requires: python-%name >= %{version}-%{release}
+Requires: libproxy-utils >= %{version}-%{release}
 
 %description -n %libname
 libproxy offers the following features:
@@ -67,7 +66,7 @@ libproxy offers the following features:
 %package        utils
 Summary:        Binary to test %{name}
 Group:          System/Configuration/Networking
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{libname} = %{version}-%{release}
 
 %description    utils
 The %{name}-utils package contains the proxy binary for %{name}
@@ -75,7 +74,7 @@ The %{name}-utils package contains the proxy binary for %{name}
 %package -n python-%name
 Summary:        Binding for %{name} and python
 Group:          Development/Python
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{libname} = %{version}-%{release}
 
 %description -n python-%name
 The python-%{name} package contains the python binding for %{name}
@@ -83,7 +82,7 @@ The python-%{name} package contains the python binding for %{name}
 %package        gnome
 Summary:        Plugin for %{name} and gnome
 Group:          System/Libraries
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{libname} = %{version}-%{release}
 
 %description    gnome
 The %{name}-gnome package contains the %{name} plugin for gnome.
@@ -91,7 +90,7 @@ The %{name}-gnome package contains the %{name} plugin for gnome.
 %package        kde
 Summary:        Plugin for %{name} and kde
 Group:          System/Libraries
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{libname} = %{version}-%{release}
 
 %description    kde
 The %{name}-kde package contains the %{name} plugin for kde.
@@ -99,7 +98,7 @@ The %{name}-kde package contains the %{name} plugin for kde.
 %package        mozjs
 Summary:        Plugin for %{name} and mozjs
 Group:          System/Libraries
-Requires:       %{name} = %{version}
+Requires:       %{libname} = %{version}
 #Tweak this according to the current gecko-libs version
 Requires:       libxulrunner >= %{gecko_version}
 Provides:       %{name}-pac = %{version}-%{release}
@@ -110,7 +109,7 @@ The %{name}-mozjs package contains the %{name} plugin for mozjs.
 %package        webkit
 Summary:        Plugin for %{name} and webkit
 Group:          System/Libraries
-Requires:       %{name} = %{version}
+Requires:       %{libname} = %{version}
 Provides:       %{name}-pac = %{version}-%{release}
 
 %description    webkit
@@ -121,6 +120,7 @@ webkit.
 Summary:        Development files for %{name}
 Group:          Development/C
 Requires:       %{libname} = %{version}-%{release}
+Provides:	%name-devel = %version-%release
 
 %description -n %develname
 The %{name}-devel package contains libraries and header files for

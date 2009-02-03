@@ -5,7 +5,7 @@
 %define develname %mklibname -d proxy
 Name:           libproxy
 Version:        0.2.3
-Release:        %mkrel 1
+Release:        %mkrel 2
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -49,8 +49,6 @@ Summary:        A library handling all the details of proxy configuration
 #Virtual Provides - We need either mozjs or WebKit
 Requires: %{name}-pac >= %{version}
 #
-Requires: python-%name >= %{version}-%{release}
-Requires: libproxy-utils >= %{version}-%{release}
 
 %description -n %libname
 libproxy offers the following features:

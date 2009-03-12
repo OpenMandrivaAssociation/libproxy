@@ -5,7 +5,7 @@
 %define develname %mklibname -d proxy
 Name:           libproxy
 Version:        0.2.3
-Release:        %mkrel 2
+Release:        %mkrel 3
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries

@@ -1,11 +1,15 @@
 %define gecko_version 1.9
 
+%define bootstrap 0
+%{?_without_bootstrap: %global bootstrap 0}
+%{?_with_bootstrap: %global bootstrap 1}
+
 %define major 0
 %define libname %mklibname proxy %major
 %define develname %mklibname -d proxy
 Name:           libproxy
 Version:        0.2.3
-Release:        %mkrel 3
+Release:        %mkrel 4
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -27,7 +31,9 @@ BuildRequires:  xulrunner-devel >= %{gecko_version}
 #BuildRequires:  NetworkManager-devel
 BuildRequires:  dbus-glib-devel
 # webkit (gtk)
+%if !%bootstrap
 BuildRequires:  webkitgtk-devel
+%endif
 # kde
 BuildRequires:  libxmu-devel
 
@@ -104,6 +110,7 @@ Provides:       %{name}-pac = %{version}-%{release}
 %description    mozjs
 The %{name}-mozjs package contains the %{name} plugin for mozjs.
 
+%if !%bootstrap
 %package        webkit
 Summary:        Plugin for %{name} and webkit
 Group:          System/Libraries
@@ -113,6 +120,7 @@ Provides:       %{name}-pac = %{version}-%{release}
 %description    webkit
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
+%endif
 
 %package -n %develname
 Summary:        Development files for %{name}
@@ -180,9 +188,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/plugins/mozjs.so
 
+%if !%bootstrap
 %files webkit
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/plugins/webkit.so
+%endif
 
 %files -n %develname
 %defattr(-,root,root,-)

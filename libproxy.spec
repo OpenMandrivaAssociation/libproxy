@@ -19,6 +19,7 @@ Source0:        http://libproxy.googlecode.com/files/libproxy-%{version}.tar.gz
 Patch0:         libproxy-0.2.3-dbus.patch
 Patch1:		libproxy-0.2.3-fix-linking.patch
 Patch2:		libproxy-0.2.3-format-strings.patch
+Patch3:		libproxy-0.2.3-jsapi-unstable.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  python-devel
@@ -138,6 +139,7 @@ developing applications that use %{name}.
 %patch0 -p1 -b .dbus
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1 -b .jsapi-unstable
 autoreconf -fi
 
 %build

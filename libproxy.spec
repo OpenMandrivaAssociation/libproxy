@@ -8,18 +8,17 @@
 %define libname %mklibname proxy %major
 %define develname %mklibname -d proxy
 Name:           libproxy
-Version:        0.2.3
-Release:        %mkrel 4
+Version:        0.3.1
+Release:        %mkrel 1
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
 License:        LGPLv2+
 URL:            http://code.google.com/p/libproxy/
-Source0:        http://libproxy.googlecode.com/files/libproxy-%{version}.tar.gz
-Patch0:         libproxy-0.2.3-dbus.patch
-Patch1:		libproxy-0.2.3-fix-linking.patch
-Patch2:		libproxy-0.2.3-format-strings.patch
-Patch3:		libproxy-0.2.3-jsapi-unstable.patch
+Source0:        http://libproxy.googlecode.com/files/libproxy-%{version}.tar.bz2
+Patch1:		libproxy-0.3.1-fix-linking.patch
+Patch2:		libproxy-0.3.1-format-strings.patch
+Patch3:		libproxy-0.3.1-jsapi-unstable.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  python-devel
@@ -36,6 +35,7 @@ BuildRequires:  dbus-glib-devel
 BuildRequires:  webkitgtk-devel
 %endif
 # kde
+BuildRequires:	kdelibs4-devel
 BuildRequires:  libxmu-devel
 
 
@@ -136,14 +136,18 @@ developing applications that use %{name}.
 
 %prep
 %setup -q
-%patch0 -p1 -b .dbus
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1 -b .jsapi-unstable
+%patch3 -p1
 autoreconf -fi
 
 %build
-%configure2_5x --includedir=%{_includedir}/libproxy --disable-static --with-python
+export CFLAGS="%{optflags} -fPIC"
+export CPPFLAGS="%{optflags} -fPIC"
+%configure2_5x \
+	--includedir=%{_includedir}/libproxy \
+	--disable-static --with-python \
+	--without-networkmanager
 %make
 
 
@@ -165,10 +169,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libproxy.so.%{major}*
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/%{version}
-%dir %{_libdir}/%{name}/%{version}/plugins
-%{_libdir}/%{name}/%{version}/plugins/envvar.so
-%{_libdir}/%{name}/%{version}/plugins/file.so
-#%{_libdir}/%{name}/%{version}/plugins/networkmanager.so
+%dir %{_libdir}/%{name}/%{version}/modules
+%{_libdir}/%{name}/%{version}/modules/config_direct.so
+%{_libdir}/%{name}/%{version}/modules/config_envvar.so
+%{_libdir}/%{name}/%{version}/modules/config_file.so
+%{_libdir}/%{name}/%{version}/modules/config_wpad.so
+%{_libdir}/%{name}/%{version}/modules/ignore_domain.so
+%{_libdir}/%{name}/%{version}/modules/ignore_ip.so
+%{_libdir}/%{name}/%{version}/modules/wpad_dnsdevolution.so
+%{_libdir}/%{name}/%{version}/modules/wpad_dns.so
 
 %files utils
 %defattr(-,root,root,-)
@@ -180,20 +189,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files gnome
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/plugins/gnome.so
+%{_libdir}/%{name}/%{version}/modules/config_gnome.so
 
 %files kde
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/plugins/kde.so
+%{_libdir}/%{name}/%{version}/modules/config_kde4.so
 
 %files mozjs
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/plugins/mozjs.so
+%{_libdir}/%{name}/%{version}/modules/pacrunner_mozjs.so
 
 %if !%bootstrap
 %files webkit
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/plugins/webkit.so
+%{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
 %endif
 
 %files -n %develname
@@ -202,5 +211,3 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/pkgconfig/libproxy-1.0.pc
-
-

@@ -4,24 +4,28 @@
 %{?_without_bootstrap: %global bootstrap 0}
 %{?_with_bootstrap: %global bootstrap 1}
 
-%define major 0
+%define major 1
 %define libname %mklibname proxy %major
+%define modmanmajor 0
+%define libnamemodman %mklibname modman %modmanmajor
 %define develname %mklibname -d proxy
 Name:           libproxy
-Version:        0.3.1
-Release:        %mkrel 2
+Version:        0.4.4
+Release:        %mkrel 1
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
 License:        LGPLv2+
 URL:            http://code.google.com/p/libproxy/
-Source0:        http://libproxy.googlecode.com/files/libproxy-%{version}.tar.bz2
-Patch1:		libproxy-0.3.1-fix-linking.patch
-Patch2:		libproxy-0.3.1-format-strings.patch
-Patch3:		libproxy-0.3.1-jsapi-unstable.patch
+# http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
+Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
+Patch0: libproxy-r698-fix-modman-build.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
+BuildRequires:  cmake
 BuildRequires:  python-devel
+#perl
+BuildRequires:  perl-devel
 # gnome
 BuildRequires:  libGConf2-devel
 # mozjs
@@ -68,6 +72,21 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
+%package -n %libnamemodman
+Group:System/Libraries
+Summary:        A library handling all the details of proxy configuration
+
+%description -n %libnamemodman
+libproxy offers the following features:
+
+    * extremely small core footprint (< 35K)
+    * no external dependencies within libproxy core
+      (libproxy plugins may have dependencies)
+    * only 3 functions in the stable external API
+    * dynamic adjustment to changing network topology
+    * a standard way of dealing with proxy settings across all scenarios
+    * a sublime sense of joy and accomplishment 
+
 %package        utils
 Summary:        Binary to test %{name}
 Group:          System/Configuration/Networking
@@ -83,6 +102,14 @@ Requires:       %{libname} = %{version}-%{release}
 
 %description -n python-%name
 The python-%{name} package contains the python binding for %{name}
+
+%package        perl
+Summary:        Perl bindings for %{name}
+Group:          Development/Perl
+Requires:       %{libname} = %{version}-%{release}
+
+%description    perl
+This contains the perl bindings for the libproxy library.
 
 %package        gnome
 Summary:        Plugin for %{name} and gnome
@@ -127,6 +154,7 @@ webkit.
 Summary:        Development files for %{name}
 Group:          Development/C
 Requires:       %{libname} = %{version}-%{release}
+Requires:       %{libnamemodman} = %{version}-%{release}
 Provides:	%name-devel = %version-%release
 
 %description -n %develname
@@ -136,34 +164,22 @@ developing applications that use %{name}.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%if %mdvver <= 201000
-%patch3 -p1
-%endif
-autoreconf -fi
+%patch0 -p0
 
 %build
-export CFLAGS="%{optflags} -fPIC"
-export CPPFLAGS="%{optflags} -fPIC"
-%configure2_5x \
-	--includedir=%{_includedir}/libproxy \
-	--disable-static --with-python \
-	--without-networkmanager
+%cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \
+-DMODULE_INSTALL_DIR=%_libdir/%name/%version/modules \
+-DPERL_VENDORINSTALL=1
 %make
-
 
 %install
 rm -rf $RPM_BUILD_ROOT
+cd build
 %makeinstall_std
+rm -f %buildroot%_libdir/libproxy/%version/modules/network_networkmanager.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%if %mdvver < 200900
-%post -n %libname -p /sbin/ldconfig
-%postun -n %libname -p /sbin/ldconfig
-%endif
 
 %files -n %libname
 %defattr(-,root,root,-)
@@ -172,14 +188,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/%{version}
 %dir %{_libdir}/%{name}/%{version}/modules
-%{_libdir}/%{name}/%{version}/modules/config_direct.so
-%{_libdir}/%{name}/%{version}/modules/config_envvar.so
-%{_libdir}/%{name}/%{version}/modules/config_file.so
-%{_libdir}/%{name}/%{version}/modules/config_wpad.so
-%{_libdir}/%{name}/%{version}/modules/ignore_domain.so
-%{_libdir}/%{name}/%{version}/modules/ignore_ip.so
-%{_libdir}/%{name}/%{version}/modules/wpad_dnsdevolution.so
-%{_libdir}/%{name}/%{version}/modules/wpad_dns.so
+
+%files -n %libnamemodman
+%defattr(-,root,root,-)
+%{_libdir}/libmodman.so.%{modmanmajor}*
+
 
 %files utils
 %defattr(-,root,root,-)
@@ -189,9 +202,15 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{py_puresitedir}/*
 
+%files perl
+%defattr(-,root,root,-)
+%perl_vendorarch/Net/Libproxy.pm
+%perl_vendorarch/auto/Net/Libproxy
+
 %files gnome
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_gnome.so
+%_libexecdir/pxgconf
 
 %files kde
 %defattr(-,root,root,-)
@@ -209,7 +228,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n %develname
 %defattr(-,root,root,-)
-%{_includedir}/libproxy/
+%{_includedir}/proxy.h
 %{_libdir}/*.so
-%{_libdir}/*.la
 %{_libdir}/pkgconfig/libproxy-1.0.pc
+%_datadir/cmake/Modules/Findlibproxy.cmake

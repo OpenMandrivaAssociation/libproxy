@@ -59,7 +59,9 @@ libproxy offers the following features:
 Group:System/Libraries
 Summary:        A library handling all the details of proxy configuration
 #Virtual Provides - We need either mozjs or WebKit
+%if !%bootstrap
 Requires: %{name}-pac >= %{version}
+%endif
 #
 
 %description -n %libname
@@ -169,6 +171,9 @@ developing applications that use %{name}.
 %patch1 -p0
 
 %build
+%if %bootstrap
+export CC="gcc -L$(pkg-config --variable sdkdir libxul)/lib"
+%endif
 %cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \
 -DMODULE_INSTALL_DIR=%_libdir/%name/%version/modules \
 -DPERL_VENDORINSTALL=1
@@ -220,11 +225,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_kde4.so
 
+%if !%bootstrap
 %files mozjs
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/pacrunner_mozjs.so
 
-%if !%bootstrap
 %files webkit
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so

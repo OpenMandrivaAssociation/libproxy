@@ -11,7 +11,7 @@
 %define develname %mklibname -d proxy
 Name:           libproxy
 Version:        0.4.4
-Release:        %mkrel 1
+Release:        %mkrel 2
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -20,6 +20,7 @@ URL:            http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
 Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
 Patch0: libproxy-r698-fix-modman-build.patch
+Patch1: libproxy-r706-fix-pkgconfig-generation.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  cmake
@@ -165,6 +166,7 @@ developing applications that use %{name}.
 %prep
 %setup -q
 %patch0 -p0
+%patch1 -p0
 
 %build
 %cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \
@@ -177,6 +179,8 @@ rm -rf $RPM_BUILD_ROOT
 cd build
 %makeinstall_std
 rm -f %buildroot%_libdir/libproxy/%version/modules/network_networkmanager.so
+#gw fix pkgconfig file
+sed -i -e "s^Version:.*^Version: %version^" %buildroot%_libdir/pkgconfig/*.pc
 
 %clean
 rm -rf $RPM_BUILD_ROOT

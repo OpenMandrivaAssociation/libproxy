@@ -1,6 +1,6 @@
 %define gecko_version 1.9
 
-%define bootstrap 0
+%define bootstrap 1
 %{?_without_bootstrap: %global bootstrap 0}
 %{?_with_bootstrap: %global bootstrap 1}
 

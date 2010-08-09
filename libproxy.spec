@@ -1,6 +1,6 @@
 %define gecko_version 1.9
 
-%define bootstrap 1
+%define bootstrap 0
 %{?_without_bootstrap: %global bootstrap 0}
 %{?_with_bootstrap: %global bootstrap 1}
 
@@ -11,7 +11,7 @@
 %define develname %mklibname -d proxy
 Name:           libproxy
 Version:        0.4.4
-Release:        %mkrel 2
+Release:        %mkrel 3
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries

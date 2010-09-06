@@ -6,12 +6,12 @@
 
 %define major 1
 %define libname %mklibname proxy %major
-%define modmanmajor 0
+%define modmanmajor 1
 %define libnamemodman %mklibname modman %modmanmajor
 %define develname %mklibname -d proxy
 Name:           libproxy
-Version:        0.4.4
-Release:        %mkrel 3
+Version:        0.4.6
+Release:        %mkrel 1
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -19,8 +19,6 @@ License:        LGPLv2+
 URL:            http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
 Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
-Patch0: libproxy-r698-fix-modman-build.patch
-Patch1: libproxy-r706-fix-pkgconfig-generation.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  cmake
@@ -167,8 +165,6 @@ developing applications that use %{name}.
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p0
 
 %build
 %if %bootstrap

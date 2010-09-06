@@ -205,7 +205,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n python-%name
 %defattr(-,root,root,-)
-%{py_puresitedir}/*
+%{py_platsitedir}/*
 
 %files perl
 %defattr(-,root,root,-)

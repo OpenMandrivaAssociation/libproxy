@@ -1,17 +1,16 @@
-%define gecko_version 1.9
-
-%define bootstrap 0
-%{?_without_bootstrap: %global bootstrap 0}
-%{?_with_bootstrap: %global bootstrap 1}
-
 %define major 1
 %define libname %mklibname proxy %major
 %define modmanmajor 1
 %define libnamemodman %mklibname modman %modmanmajor
 %define develname %mklibname -d proxy
+
+%define bootstrap 0
+%{?_without_bootstrap: %global bootstrap 0}
+%{?_with_bootstrap: %global bootstrap 1}
+
 Name:           libproxy
 Version:        0.4.6
-Release:        %mkrel 2
+Release:        %mkrel 3
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -20,27 +19,22 @@ URL:            http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
 Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
-
 BuildRequires:  cmake
 BuildRequires:  python-devel
-#perl
+BuildRequires:	zlib-devel
+# perl
 BuildRequires:  perl-devel
+%if !%bootstrap
 # gnome
 BuildRequires:  libGConf2-devel
-# mozjs
-BuildRequires:  xulrunner-devel >= %{gecko_version}
 # NetworkManager
-#gw disabled, it is in contrib
-#BuildRequires:  NetworkManager-devel
+BuildRequires:  NetworkManager-devel
 BuildRequires:  dbus-glib-devel
 # webkit (gtk)
-%if !%bootstrap
-BuildRequires:  webkitgtk-devel
-%endif
+BuildRequires:	webkitgtk-devel
 # kde
 BuildRequires:	kdelibs4-devel
-BuildRequires:  libxmu-devel
-
+%endif
 
 %description
 libproxy offers the following features:
@@ -56,11 +50,9 @@ libproxy offers the following features:
 %package -n %libname
 Group:System/Libraries
 Summary:        A library handling all the details of proxy configuration
-#Virtual Provides - We need either mozjs or WebKit
-%if !%bootstrap
-Requires: %{name}-pac >= %{version}
-%endif
-#
+Obsoletes: libproxy-mozjs < 0.4.6-3
+Obsoletes: libproxy-webkit < 0.4.6-3
+Provides: libproxy-pac = %{version}-%{release}
 
 %description -n %libname
 libproxy offers the following features:
@@ -112,6 +104,7 @@ Requires:       %{libname} = %{version}-%{release}
 %description    perl
 This contains the perl bindings for the libproxy library.
 
+%if !%bootstrap
 %package        gnome
 Summary:        Plugin for %{name} and gnome
 Group:          System/Libraries
@@ -128,27 +121,13 @@ Requires:       %{libname} = %{version}-%{release}
 %description    kde
 The %{name}-kde package contains the %{name} plugin for kde.
 
-%package        mozjs
-Summary:        Plugin for %{name} and mozjs
-Group:          System/Libraries
-Requires:       %{libname} = %{version}
-#Tweak this according to the current gecko-libs version
-Requires:       libxulrunner >= %{gecko_version}
-Provides:       %{name}-pac = %{version}-%{release}
+%package	networkmanager
+Summary:	Plugin for %{name} and networkmanager
+Group:		System/Libraries
+Requires:	%{libname} = %{version}-%{release}
 
-%description    mozjs
-The %{name}-mozjs package contains the %{name} plugin for mozjs.
-
-%if !%bootstrap
-%package        webkit
-Summary:        Plugin for %{name} and webkit
-Group:          System/Libraries
-Requires:       %{libname} = %{version}
-Provides:       %{name}-pac = %{version}-%{release}
-
-%description    webkit
-The %{name}-webkit package contains the %{name} plugin for
-webkit.
+%description	networkmanager
+The %{name}-networkmanager package contains the %{name} plugin for networkmanager.
 %endif
 
 %package -n %develname
@@ -162,42 +141,42 @@ Provides:	%name-devel = %version-%release
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
-
 %prep
 %setup -q
 
 %build
-%if %bootstrap
-export CC="gcc -L$(pkg-config --variable sdkdir libxul)/lib"
-%endif
 %cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \
--DMODULE_INSTALL_DIR=%_libdir/%name/%version/modules \
--DPERL_VENDORINSTALL=1
+	-DMODULE_INSTALL_DIR=%_libdir/%name/%version/modules \
+	-DPERL_VENDORINSTALL=1 -DWITH_MOZJS=OFF
 %make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-cd build
-%makeinstall_std
-rm -f %buildroot%_libdir/libproxy/%version/modules/network_networkmanager.so
+%makeinstall_std -C build
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %version^" %buildroot%_libdir/pkgconfig/*.pc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%check
+pushd build
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/libmodman ctest .
+popd
+
 %files -n %libname
 %defattr(-,root,root,-)
 %doc AUTHORS README
 %{_libdir}/libproxy.so.%{major}*
+%if !%bootstrap
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/%{version}
 %dir %{_libdir}/%{name}/%{version}/modules
+%endif
 
 %files -n %libnamemodman
 %defattr(-,root,root,-)
 %{_libdir}/libmodman.so.%{modmanmajor}*
-
 
 %files utils
 %defattr(-,root,root,-)
@@ -212,6 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 %perl_vendorarch/Net/Libproxy.pm
 %perl_vendorarch/auto/Net/Libproxy
 
+%if !%bootstrap
 %files gnome
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_gnome.so
@@ -221,14 +201,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_kde4.so
 
-%if !%bootstrap
-%files mozjs
+%files networkmanager
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/modules/pacrunner_mozjs.so
-
-%files webkit
-%defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
+%{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
 %endif
 
 %files -n %develname

@@ -151,13 +151,13 @@ developing applications that use %{name}.
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 %makeinstall_std -C build
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %version^" %buildroot%_libdir/pkgconfig/*.pc
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %check
 pushd build

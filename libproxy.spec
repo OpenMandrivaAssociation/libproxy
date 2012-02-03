@@ -10,7 +10,7 @@
 
 Name:           libproxy
 Version:        0.4.6
-Release:	6
+Release:	%mkrel 6
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries

@@ -18,18 +18,18 @@ Patch0:		libproxy-0.4.7-xul2.0.patch
 Patch1:		libproxy-javascriptcoregtk.patch
 Patch2:		libproxy-0.4.7-add-missing-linkage.patch
 BuildRequires:	cmake
-BuildRequires:	python-devel
-BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(python)
+BuildRequires:	pkgconfig(zlib)
 # perl
 BuildRequires:	perl-devel
 %if !%{with bootstrap}
 # gnome
-BuildRequires:	libGConf2-devel
+BuildRequires:	pkgconfig(gconf-2.0)
 # NetworkManager
 BuildRequires:	pkgconfig(NetworkManager)
-BuildRequires:	dbus-glib-devel
+BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
-BuildRequires:	webkitgtk-devel
+BuildRequires:	pkgconfig(webkit-1.0)
 # kde
 BuildRequires:	kdelibs4-devel
 %endif

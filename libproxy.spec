@@ -162,8 +162,8 @@ popd
 %{python_sitelib}/libproxy.py
 
 %files perl
-%perl_vendorarch/Net/Libproxy.pm
-%perl_vendorarch/auto/Net/Libproxy
+%{perl_vendorarch}/Net/Libproxy.pm
+%{perl_vendorarch}/auto/Net/Libproxy
 
 %if !%{with bootstrap}
 %files gnome
@@ -181,4 +181,4 @@ popd
 %{_includedir}/proxy.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libproxy-1.0.pc
-%_datadir/cmake/Modules/Findlibproxy.cmake
+%{_datadir}/cmake/Modules/Findlibproxy.cmake

@@ -9,8 +9,8 @@
 %{?_with_bootstrap: %global bootstrap 1}
 
 Name:           libproxy
-Version:        0.4.6
-Release:	%mkrel 6
+Version:        0.4.7
+Release:	1
 Summary:        A library handling all the details of proxy configuration
 
 Group:          System/Libraries
@@ -18,6 +18,9 @@ License:        LGPLv2+
 URL:            http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
 Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
+Patch0:		libproxy-0.4.7-xul2.0.patch
+Patch1:		libproxy-javascriptcoregtk.patch
+Patch2:         libproxy-0.4.7-add-missing-linkage.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires:  cmake
 BuildRequires:  python-devel
@@ -28,7 +31,7 @@ BuildRequires:  perl-devel
 # gnome
 BuildRequires:  libGConf2-devel
 # NetworkManager
-BuildRequires:  NetworkManager-devel
+BuildRequires:  pkgconfig(NetworkManager)
 BuildRequires:  dbus-glib-devel
 # webkit (gtk)
 BuildRequires:	webkitgtk-devel
@@ -143,6 +146,9 @@ developing applications that use %{name}.
 
 %prep
 %setup -q
+%patch0 -p1 -b .xul20~
+%patch1 -p0 -b .webkitgtk~
+%patch2 -p1 -b .linkage~
 
 %build
 %cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \

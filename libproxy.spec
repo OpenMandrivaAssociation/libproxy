@@ -1,36 +1,33 @@
-%define major 1
-%define libname %mklibname proxy %major
-%define develname %mklibname -d proxy
+%define	major	1
+%define	libname	%mklibname proxy %major
+%define	devname	%mklibname -d proxy
 
-%define bootstrap 0
-%{?_without_bootstrap: %global bootstrap 0}
-%{?_with_bootstrap: %global bootstrap 1}
+%bcond_with	bootstrap
 
-Name:           libproxy
-Version:        0.4.7
+Name:		libproxy
+Version:	0.4.7
 Release:	1
-Summary:        A library handling all the details of proxy configuration
+Summary:	A library handling all the details of proxy configuration
 
-Group:          System/Libraries
-License:        LGPLv2+
-URL:            http://code.google.com/p/libproxy/
+Group:		System/Libraries
+License:	LGPLv2+
+URL:		http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
-Source0:        http://%name.googlecode.com/files/%name-%version.tar.gz
+Source0:	http://%{name}.googlecode.com/files/%{name}-%{version}.tar.gz
 Patch0:		libproxy-0.4.7-xul2.0.patch
 Patch1:		libproxy-javascriptcoregtk.patch
-Patch2:         libproxy-0.4.7-add-missing-linkage.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires:  cmake
-BuildRequires:  python-devel
+Patch2:		libproxy-0.4.7-add-missing-linkage.patch
+BuildRequires:	cmake
+BuildRequires:	python-devel
 BuildRequires:	zlib-devel
 # perl
-BuildRequires:  perl-devel
-%if !%bootstrap
+BuildRequires:	perl-devel
+%if !%{with bootstrap}
 # gnome
-BuildRequires:  libGConf2-devel
+BuildRequires:	libGConf2-devel
 # NetworkManager
-BuildRequires:  pkgconfig(NetworkManager)
-BuildRequires:  dbus-glib-devel
+BuildRequires:	pkgconfig(NetworkManager)
+BuildRequires:	dbus-glib-devel
 # webkit (gtk)
 BuildRequires:	webkitgtk-devel
 # kde
@@ -48,14 +45,14 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
-%package -n %libname
-Group:System/Libraries
-Summary:        A library handling all the details of proxy configuration
-Obsoletes: libproxy-mozjs < 0.4.6-3
-Obsoletes: libproxy-webkit < 0.4.6-3
-Provides: libproxy-pac = %{version}-%{release}
+%package -n	%{libname}
+Group:		System/Libraries
+Summary:	A library handling all the details of proxy configuration
+Obsoletes:	libproxy-mozjs < 0.4.6-3
+Obsoletes:	libproxy-webkit < 0.4.6-3
+Provides:	libproxy-pac = %{version}-%{release}
 
-%description -n %libname
+%description -n	%{libname}
 libproxy offers the following features:
 
     * extremely small core footprint (< 35K)
@@ -66,45 +63,45 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
-%package        utils
-Summary:        Binary to test %{name}
-Group:          System/Configuration/Networking
-Requires:       %{libname} = %{version}-%{release}
+%package	utils
+Summary:	Binary to test %{name}
+Group:		System/Configuration/Networking
+Requires:	%{libname} = %{version}-%{release}
 
-%description    utils
+%description	utils
 The %{name}-utils package contains the proxy binary for %{name}
 
-%package -n python-%name
-Summary:        Binding for %{name} and python
-Group:          Development/Python
-Requires:       %{libname} = %{version}-%{release}
+%package -n	python-%{name}
+Summary:	Binding for %{name} and python
+Group:		Development/Python
+Requires:	%{libname} = %{version}-%{release}
 
-%description -n python-%name
+%description -n python-%{name}
 The python-%{name} package contains the python binding for %{name}
 
-%package        perl
-Summary:        Perl bindings for %{name}
-Group:          Development/Perl
-Requires:       %{libname} = %{version}-%{release}
+%package	perl
+Summary:	Perl bindings for %{name}
+Group:		Development/Perl
+Requires:	%{libname} = %{version}-%{release}
 
-%description    perl
+%description	perl
 This contains the perl bindings for the libproxy library.
 
-%if !%bootstrap
-%package        gnome
-Summary:        Plugin for %{name} and gnome
-Group:          System/Libraries
-Requires:       %{libname} = %{version}-%{release}
+%if !%{with bootstrap}
+%package	gnome
+Summary:	Plugin for %{name} and gnome
+Group:		System/Libraries
+Requires:	%{libname} = %{version}-%{release}
 
-%description    gnome
+%description	gnome
 The %{name}-gnome package contains the %{name} plugin for gnome.
 
-%package        kde
-Summary:        Plugin for %{name} and kde
-Group:          System/Libraries
-Requires:       %{libname} = %{version}-%{release}
+%package	kde
+Summary:	Plugin for %{name} and kde
+Group:		System/Libraries
+Requires:	%{libname} = %{version}-%{release}
 
-%description    kde
+%description	kde
 The %{name}-kde package contains the %{name} plugin for kde.
 
 %package	networkmanager
@@ -117,13 +114,13 @@ The %{name}-networkmanager package contains the %{name} plugin for
 networkmanager.
 %endif
 
-%package -n %develname
-Summary:        Development files for %{name}
-Group:          Development/C
-Requires:       %{libname} = %{version}-%{release}
-Provides:	%name-devel = %version-%release
+%package -n	%{devname}
+Summary:	Development files for %{name}
+Group:		Development/C
+Requires:	%{libname} = %{version}-%{release}
+Provides:	%{name}-devel = %{version}-%{release}
 
-%description -n %develname
+%description -n	%{devname}
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
@@ -134,65 +131,53 @@ developing applications that use %{name}.
 %patch2 -p1 -b .linkage~
 
 %build
-%cmake -Dlibexecdir=%_libexecdir -DLIBEXEC_INSTALL_DIR=%_libexecdir \
-	-DMODULE_INSTALL_DIR=%_libdir/%name/%version/modules \
+%cmake -Dlibexecdir=%{_libexecdir} -DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
+	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules \
 	-DPERL_VENDORINSTALL=1 -DWITH_MOZJS=OFF
 %make
 
 %install
-rm -rf %{buildroot}
 %makeinstall_std -C build
 #gw fix pkgconfig file
-sed -i -e "s^Version:.*^Version: %version^" %buildroot%_libdir/pkgconfig/*.pc
-
-%clean
-rm -rf %{buildroot}
+sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
 %check
 pushd build
 ctest .
 popd
 
-%files -n %libname
-%defattr(-,root,root,-)
+%files -n %{libname}
 %doc AUTHORS README
 %{_libdir}/libproxy.so.%{major}*
-%if !%bootstrap
+%if !%{with bootstrap}
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/%{version}
 %dir %{_libdir}/%{name}/%{version}/modules
 %endif
 
 %files utils
-%defattr(-,root,root,-)
 %{_bindir}/proxy
 
-%files -n python-%name
-%defattr(-,root,root,-)
+%files -n python-%{name}
 %{python_sitelib}/libproxy.py
 
 %files perl
-%defattr(-,root,root,-)
 %perl_vendorarch/Net/Libproxy.pm
 %perl_vendorarch/auto/Net/Libproxy
 
-%if !%bootstrap
+%if !%{with bootstrap}
 %files gnome
-%defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_gnome3.so
 %{_libexecdir}/pxgsettings
 
 %files kde
-%defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/config_kde4.so
 
 %files networkmanager
-%defattr(-,root,root,-)
 %{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
 %endif
 
-%files -n %develname
-%defattr(-,root,root,-)
+%files -n %devname
 %{_includedir}/proxy.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libproxy-1.0.pc

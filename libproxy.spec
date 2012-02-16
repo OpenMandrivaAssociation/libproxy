@@ -121,7 +121,6 @@ networkmanager.
 Summary:        Development files for %{name}
 Group:          Development/C
 Requires:       %{libname} = %{version}-%{release}
-Requires:       %{libnamemodman} = %{version}-%{release}
 Provides:	%name-devel = %version-%release
 
 %description -n %develname
@@ -151,7 +150,7 @@ rm -rf %{buildroot}
 
 %check
 pushd build
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/libmodman ctest .
+ctest .
 popd
 
 %files -n %libname

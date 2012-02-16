@@ -113,7 +113,8 @@ Group:		System/Libraries
 Requires:	%{libname} = %{version}-%{release}
 
 %description	networkmanager
-The %{name}-networkmanager package contains the %{name} plugin for networkmanager.
+The %{name}-networkmanager package contains the %{name} plugin for
+networkmanager.
 %endif
 
 %package -n %develname

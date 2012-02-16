@@ -177,7 +177,7 @@ popd
 %{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
 %endif
 
-%files -n %devname
+%files -n %{devname}
 %{_includedir}/proxy.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libproxy-1.0.pc

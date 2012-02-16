@@ -1,7 +1,5 @@
 %define major 1
 %define libname %mklibname proxy %major
-%define modmanmajor 1
-%define libnamemodman %mklibname modman %modmanmajor
 %define develname %mklibname -d proxy
 
 %define bootstrap 0
@@ -58,21 +56,6 @@ Obsoletes: libproxy-webkit < 0.4.6-3
 Provides: libproxy-pac = %{version}-%{release}
 
 %description -n %libname
-libproxy offers the following features:
-
-    * extremely small core footprint (< 35K)
-    * no external dependencies within libproxy core
-      (libproxy plugins may have dependencies)
-    * only 3 functions in the stable external API
-    * dynamic adjustment to changing network topology
-    * a standard way of dealing with proxy settings across all scenarios
-    * a sublime sense of joy and accomplishment 
-
-%package -n %libnamemodman
-Group:System/Libraries
-Summary:        A library handling all the details of proxy configuration
-
-%description -n %libnamemodman
 libproxy offers the following features:
 
     * extremely small core footprint (< 35K)
@@ -180,17 +163,13 @@ popd
 %dir %{_libdir}/%{name}/%{version}/modules
 %endif
 
-%files -n %libnamemodman
-%defattr(-,root,root,-)
-%{_libdir}/libmodman.so.%{modmanmajor}*
-
 %files utils
 %defattr(-,root,root,-)
 %{_bindir}/proxy
 
 %files -n python-%name
 %defattr(-,root,root,-)
-%{py_platsitedir}/*
+%{python_sitelib}/libproxy.py
 
 %files perl
 %defattr(-,root,root,-)
@@ -200,8 +179,8 @@ popd
 %if !%bootstrap
 %files gnome
 %defattr(-,root,root,-)
-%{_libdir}/%{name}/%{version}/modules/config_gnome.so
-%_libexecdir/pxgconf
+%{_libdir}/%{name}/%{version}/modules/config_gnome3.so
+%{_libexecdir}/pxgsettings
 
 %files kde
 %defattr(-,root,root,-)

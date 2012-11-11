@@ -1,0 +1,21 @@
+--- libproxy-0.4.7/bindings/perl/src/CMakeLists.txt~	2012-02-16 09:48:00.878070249 +0100
++++ libproxy-0.4.7/bindings/perl/src/CMakeLists.txt	2012-02-16 09:48:03.445073220 +0100
+@@ -12,7 +12,7 @@ set(Libproxy_LIB_SRCS Libproxy.c)
+ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/perl/blib/arch/auto/Net)
+ add_library(PLlibproxy SHARED ${Libproxy_LIB_SRCS})
+ 
+-target_link_libraries(PLlibproxy ${PERL_LIBRARY} libproxy)
++target_link_libraries(PLlibproxy ${PERL_LIBRARY} pthread libproxy)
+ set_target_properties(PLlibproxy PROPERTIES OUTPUT_NAME "Libproxy")
+ set_target_properties(PLlibproxy PROPERTIES PREFIX "")
+ 
+--- libproxy-0.4.7/libproxy/cmake/modules/pacrunner_webkit.cmk~	2012-02-16 09:47:45.183052087 +0100
++++ libproxy-0.4.7/libproxy/cmake/modules/pacrunner_webkit.cmk	2012-02-16 09:47:46.752053902 +0100
+@@ -18,6 +18,7 @@ else()
+       px_check_modules(WEBKIT webkitgtk-3.0<1.5.0)
+     endif(NOT WEBKIT_LIBRARIES)
+   else()
++    px_check_modules(WEBKIT javascriptcoregtk-1.0)
+     px_check_modules(WEBKIT webkit-1.0)
+   endif()
+ endif()

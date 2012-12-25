@@ -138,9 +138,9 @@ developing applications that use %{name}.
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
 %check
-pushd build
-ctest .
-popd
+#pushd build
+#ctest .
+#popd
 
 %files -n %{libname}
 %doc AUTHORS README

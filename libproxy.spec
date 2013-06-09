@@ -1,4 +1,4 @@
-%define major 1
+%define major	1
 %define libname %mklibname proxy %{major}
 %define devname %mklibname -d proxy
 
@@ -64,7 +64,6 @@ libproxy offers the following features:
 %package	utils
 Summary:	Binary to test %{name}
 Group:		System/Configuration/Networking
-Requires:	%{libname} = %{version}-%{release}
 
 %description	utils
 The %{name}-utils package contains the proxy binary for %{name}
@@ -89,7 +88,6 @@ This contains the perl bindings for the libproxy library.
 %package	gnome
 Summary:	Plugin for %{name} and gnome
 Group:		System/Libraries
-Requires:	%{libname} = %{version}-%{release}
 
 %description	gnome
 The %{name}-gnome package contains the %{name} plugin for gnome.
@@ -97,7 +95,6 @@ The %{name}-gnome package contains the %{name} plugin for gnome.
 %package	kde
 Summary:	Plugin for %{name} and kde
 Group:		System/Libraries
-Requires:	%{libname} = %{version}-%{release}
 
 %description	kde
 The %{name}-kde package contains the %{name} plugin for kde.
@@ -127,9 +124,12 @@ developing applications that use %{name}.
 %apply_patches
 
 %build
-%cmake -Dlibexecdir=%{_libexecdir} -DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
+%cmake \
+	-Dlibexecdir=%{_libexecdir} \
+	-DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
 	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules \
-	-DPERL_VENDORINSTALL=1 -DWITH_MOZJS=OFF
+	-DPERL_VENDORINSTALL=1 \
+	-DWITH_MOZJS=OFF
 %make
 
 %install

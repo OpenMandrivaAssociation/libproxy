@@ -2,7 +2,7 @@
 %define libname %mklibname proxy %{major}
 %define devname %mklibname -d proxy
 
-%bcond_with	bootstrap
+%bcond_without	bootstrap
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy

@@ -7,7 +7,7 @@
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.11
-Release:	8
+Release:	9
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		http://code.google.com/p/libproxy/
@@ -27,7 +27,7 @@ BuildRequires:	pkgconfig(gconf-2.0)
 BuildRequires:	pkgconfig(NetworkManager)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
-BuildRequires:	pkgconfig(webkit-1.0)
+BuildRequires:	pkgconfig(webkit-3.0)
 # kde
 BuildRequires:	kdelibs4-devel
 %endif
@@ -107,6 +107,16 @@ Requires:	%{libname} = %{version}-%{release}
 %description	networkmanager
 The %{name}-networkmanager package contains the %{name} plugin for
 networkmanager.
+
+%package        webkit
+Summary:        Plugin for %{name} and webkit
+Group:          System/Libraries
+Requires:       %{libname} = %{version}-%{release}
+
+%description    webkit
+The %{name}-webkit package contains the %{name} plugin for
+webkit.
+
 %endif
 
 %package -n	%{devname}
@@ -124,12 +134,15 @@ developing applications that use %{name}.
 %apply_patches
 
 %build
+# BIPR=OFF so we dont end up requiring gtk/webkit just for the lib 
 %cmake \
 	-Dlibexecdir=%{_libexecdir} \
 	-DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
 	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules \
+	-DBIPR=OFF \
 	-DPERL_VENDORINSTALL=1 \
-	-DWITH_MOZJS=OFF
+	-DWITH_MOZJS=OFF \
+	-DWITH_WEBKIT3=1
 %make
 
 %install
@@ -171,6 +184,10 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 
 %files networkmanager
 %{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
+
+%files webkit
+%{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
+
 %endif
 
 %files -n %{devname}

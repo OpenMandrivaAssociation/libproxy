@@ -27,7 +27,7 @@ BuildRequires:	pkgconfig(gconf-2.0)
 BuildRequires:	pkgconfig(NetworkManager)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
-BuildRequires:	pkgconfig(webkit-3.0)
+BuildRequires:	pkgconfig(webkitgtk-3.0)
 # kde
 BuildRequires:	kdelibs4-devel
 %endif

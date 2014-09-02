@@ -14,6 +14,7 @@ Url:		http://code.google.com/p/libproxy/
 # http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
 Source0:	http://%{name}.googlecode.com/files/%{name}-%{version}.tar.gz
 Patch0:		libproxy-0.4.11-add-missing-linkage.patch
+Patch1:		libproxy-0.4.11-python3.patch
 
 BuildRequires:	cmake
 BuildRequires:	pkgconfig(python)

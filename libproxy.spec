@@ -7,7 +7,7 @@
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.11
-Release:	11
+Release:	12
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		http://code.google.com/p/libproxy/

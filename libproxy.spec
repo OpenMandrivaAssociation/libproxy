@@ -28,6 +28,7 @@ BuildRequires:	pkgconfig(NetworkManager)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
 BuildRequires:	pkgconfig(webkitgtk-3.0)
+BuildRequires:  pkgconfig(javascriptcoregtk-4.0)
 %endif
 
 %description
@@ -183,7 +184,7 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %{_libexecdir}/pxgsettings
 
 %files kde
-%{_libdir}/%{name}/%{version}/modules/config_kde4.so
+%{_libdir}/%{name}/%{version}/modules/config_kde.so
 
 %files networkmanager
 %{_libdir}/%{name}/%{version}/modules/network_networkmanager.so

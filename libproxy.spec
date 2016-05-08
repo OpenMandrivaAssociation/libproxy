@@ -12,10 +12,10 @@ Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.gz
-Patch0:		libproxy-0.4.11-add-missing-linkage.patch
 Patch1:		libproxy-0.4.11-python3.patch
 
 BuildRequires:	cmake
+BuildRequires:	ninja
 BuildRequires:	pkgconfig(python)
 BuildRequires:	pkgconfig(zlib)
 # perl
@@ -132,7 +132,6 @@ developing applications that use %{name}.
 %setup -q
 %apply_patches
 
-%build
 # BIPR=OFF so we dont end up requiring gtk/webkit just for the lib
 %cmake \
 	-Dlibexecdir=%{_libexecdir} \
@@ -143,10 +142,13 @@ developing applications that use %{name}.
 	-DPERL_LINK_LIBPERL=1 \
 	-DWITH_MOZJS=OFF \
 	-DWITH_WEBKIT3=1
-%make
+
+%build
+%ninja -C build
 
 %install
-%makeinstall_std -C build
+%ninja_install -C build
+
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 

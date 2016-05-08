@@ -6,13 +6,12 @@
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.11
-Release:	15
+Version:	0.4.13
+Release:	1
 Group:		System/Libraries
 License:	LGPLv2+
-Url:		http://code.google.com/p/libproxy/
-# http://code.google.com/p/libproxy/issues/detail?id=130&can=1&q=perl
-Source0:	http://%{name}.googlecode.com/files/%{name}-%{version}.tar.gz
+Url:		https://github.com/libproxy/libproxy
+Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.gz
 Patch0:		libproxy-0.4.11-add-missing-linkage.patch
 Patch1:		libproxy-0.4.11-python3.patch
 
@@ -29,8 +28,6 @@ BuildRequires:	pkgconfig(NetworkManager)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
 BuildRequires:	pkgconfig(webkitgtk-3.0)
-# kde
-BuildRequires:	kdelibs4-devel
 %endif
 
 %description
@@ -44,7 +41,7 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
-%package -n	%{libname}
+%package -n %{libname}
 Group:		System/Libraries
 Summary:	A library handling all the details of proxy configuration
 Obsoletes:	libproxy-mozjs < 0.4.6-3
@@ -62,69 +59,70 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
-%package	utils
+%package utils
 Summary:	Binary to test %{name}
 Group:		System/Configuration/Networking
 
-%description	utils
-The %{name}-utils package contains the proxy binary for %{name}
+%description utils
+The %{name}-utils package contains the proxy binary for %{name}.
 
-%package -n	python-%{name}
+%package -n python-%{name}
 Summary:	Binding for %{name} and python
 Group:		Development/Python
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n python-%{name}
-The python-%{name} package contains the python binding for %{name}
+The python-%{name} package contains the python binding for %{name}.
 
-%package	perl
+%package perl
 Summary:	Perl bindings for %{name}
 Group:		Development/Perl
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
-%description	perl
+%description perl
 This contains the perl bindings for the libproxy library.
 
 %if !%{with bootstrap}
-%package	gnome
+%package gnome
 Summary:	Plugin for %{name} and gnome
 Group:		System/Libraries
 
-%description	gnome
+%description gnome
 The %{name}-gnome package contains the %{name} plugin for gnome.
 
-%package	kde
+%package kde
 Summary:	Plugin for %{name} and kde
 Group:		System/Libraries
+Requires:	kconfig
 
-%description	kde
+%description kde
 The %{name}-kde package contains the %{name} plugin for kde.
 
-%package	networkmanager
+%package networkmanager
 Summary:	Plugin for %{name} and networkmanager
 Group:		System/Libraries
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
-%description	networkmanager
+%description networkmanager
 The %{name}-networkmanager package contains the %{name} plugin for
 networkmanager.
 
-%package        webkit
-Summary:        Plugin for %{name} and webkit
-Group:          System/Libraries
-Requires:       %{libname} = %{version}-%{release}
+%package webkit
+Summary:	Plugin for %{name} and webkit
+Group:		System/Libraries
+Requires:	%{libname} = %{EVRD}
 
-%description    webkit
+%description webkit
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
 
 %endif
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
-Requires:	%{libname} = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
 
 %description -n	%{devname}
 The %{name}-devel package contains libraries and header files for
@@ -135,13 +133,14 @@ developing applications that use %{name}.
 %apply_patches
 
 %build
-# BIPR=OFF so we dont end up requiring gtk/webkit just for the lib 
+# BIPR=OFF so we dont end up requiring gtk/webkit just for the lib
 %cmake \
 	-Dlibexecdir=%{_libexecdir} \
 	-DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
 	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules \
 	-DBIPR=OFF \
 	-DPERL_VENDORINSTALL=1 \
+	-DPERL_LINK_LIBPERL=1 \
 	-DWITH_MOZJS=OFF \
 	-DWITH_WEBKIT3=1
 %make
@@ -196,4 +195,3 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libproxy-1.0.pc
 %{_datadir}/cmake/Modules/Findlibproxy.cmake
-

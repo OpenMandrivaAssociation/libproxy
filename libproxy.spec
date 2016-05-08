@@ -141,7 +141,8 @@ developing applications that use %{name}.
 	-DPERL_VENDORINSTALL=1 \
 	-DPERL_LINK_LIBPERL=1 \
 	-DWITH_MOZJS=OFF \
-	-DWITH_WEBKIT3=1
+	-DWITH_WEBKIT3=1 \
+	-G Ninja
 
 %build
 %ninja -C build

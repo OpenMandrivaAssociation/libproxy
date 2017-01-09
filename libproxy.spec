@@ -1,34 +1,32 @@
-%define major	1
+%define major 1
 %define libname %mklibname proxy %{major}
 %define devname %mklibname -d proxy
 
-%bcond_with	bootstrap
+%bcond_with bootstrap
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.13
+Version:	0.4.14
 Release:	1
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
-Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.gz
-Patch1:		libproxy-0.4.11-python3.patch
-
+Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
 BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	pkgconfig(python)
 BuildRequires:	pkgconfig(zlib)
-# perl
 BuildRequires:	perl-devel
 %if !%{with bootstrap}
 # gnome
 BuildRequires:	pkgconfig(gconf-2.0)
 # NetworkManager
 BuildRequires:	pkgconfig(NetworkManager)
+BuildRequires:	pkgconfig(libnm)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
 BuildRequires:	pkgconfig(webkitgtk-3.0)
-BuildRequires:  pkgconfig(javascriptcoregtk-4.0)
+BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
 
 %description
@@ -154,13 +152,12 @@ developing applications that use %{name}.
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
-%check
+#check
 #pushd build
 #ctest .
 #popd
 
 %files -n %{libname}
-%doc AUTHORS README
 %{_libdir}/libproxy.so.%{major}*
 %if !%{with bootstrap}
 %dir %{_libdir}/%{name}
@@ -195,6 +192,7 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %endif
 
 %files -n %{devname}
+%doc AUTHORS README
 %{_includedir}/proxy.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libproxy-1.0.pc

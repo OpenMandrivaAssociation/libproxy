@@ -22,6 +22,7 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig(gconf-2.0)
 # NetworkManager
 BuildRequires:	pkgconfig(NetworkManager)
+BuildRequires:	pkgconfig(libnm)
 BuildRequires:	pkgconfig(dbus-glib-1)
 # webkit (gtk)
 BuildRequires:	pkgconfig(webkitgtk-3.0)

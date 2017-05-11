@@ -6,7 +6,7 @@
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.14
+Version:	0.4.15
 Release:	1
 Group:		System/Libraries
 License:	LGPLv2+

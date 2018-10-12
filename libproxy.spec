@@ -23,7 +23,7 @@
 %bcond_without gnome3
 %bcond_with dotnet
 %bcond_without kde
-%bcond_with mozjs
+%bcond_without mozjs
 %bcond_with natus
 %bcond_without networkmanager
 %bcond_without perl
@@ -37,11 +37,14 @@
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.15
-Release:	3
+Release:	4
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
+Patch0:         libproxy-0.4.15-python3738.patch
+# https://github.com/libproxy/libproxy/pull/86
+Patch1:         libproxy-0.4.15-mozjs52.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	pkgconfig(python)
@@ -72,7 +75,7 @@ BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
 %if %{with mozjs}
-BuildRequires:	pkgconfig(mozjs-38)
+BuildRequires:	pkgconfig(mozjs-52)
 %endif
 
 %description
@@ -195,8 +198,7 @@ The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
 %prep
-%setup -q
-%apply_patches
+%autosetup -p1
 
 # BIPR=OFF so we dont end up requiring gtk/webkit just for the lib
 %cmake \

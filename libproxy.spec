@@ -192,6 +192,17 @@ Requires:	%{libname} = %{EVRD}
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
 
+%if %{with mozjs}
+%package mozjs
+Summary:	Plugin for %{name} and mozjs
+Group:		System/Libraries
+Requires:	%{libname} = %{EVRD}
+
+%description mozjs
+The %{name}-mozjs package contains the %{name} plugin for
+mozjs.
+%endif
+
 %package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
@@ -299,6 +310,11 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %if %{with webkit1} || %{with webkit}
 %files webkit
 %{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
+%endif
+
+%if %{with mozjs}
+%files mozjs
+%{_libdir}/%{name}/%{version}/modules/pacrunner_mozjs.so
 %endif
 
 %if %{with vala}

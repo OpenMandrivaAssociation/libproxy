@@ -47,7 +47,12 @@ Patch0:         libproxy-0.4.15-python3738.patch
 Patch1:         libproxy-0.4.15-mozjs52.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
+%if %{with python}
 BuildRequires:	pkgconfig(python)
+%endif
+%if %{with python2}
+BuildRequires:	pkgconfig(python2)
+%endif
 BuildRequires:	pkgconfig(zlib)
 %if %{with perl}
 BuildRequires:	perl-devel

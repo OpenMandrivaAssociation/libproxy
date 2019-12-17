@@ -48,7 +48,6 @@ Patch1:		libproxy-0.4.15-mozjs52.patch
 # https://github.com/libproxy/libproxy/pull/95
 Patch2:		libproxy-0.4.15-mozjs60.patch
 BuildRequires:	cmake
-BuildRequires:	ninja
 %if %{with python}
 BuildRequires:	pkgconfig(python)
 %endif
@@ -242,14 +241,13 @@ developing applications that use %{name}.
 	-DWITH_WEBKIT:BOOL=%{with webkit1} \
 	-DWITH_WEBKIT3:BOOL=%{with webkit} \
 	-DWITH_NATUS:BOOL=%{with natus} \
-	-DWITH_NM:BOOL=%{with networkmanager} \
-	-G Ninja
+	-DWITH_NM:BOOL=%{with networkmanager}
 
 %build
-%ninja -C build
+%make_build -C build
 
 %install
-%ninja_install -C build
+%make_install -C build
 
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc

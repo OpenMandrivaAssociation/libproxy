@@ -67,7 +67,6 @@ BuildRequires:	pkgconfig(mono-cecil)
 BuildRequires:	pkgconfig(natus)
 %endif
 %if %{with networkmanager}
-BuildRequires:	pkgconfig(NetworkManager)
 BuildRequires:	pkgconfig(libnm)
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(dbus-glib-1)
@@ -80,7 +79,7 @@ BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
 %if %{with mozjs}
-BuildRequires:	pkgconfig(mozjs-52)
+BuildRequires:	pkgconfig(mozjs-60)
 %endif
 
 %description

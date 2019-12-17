@@ -79,7 +79,7 @@ BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
 %if %{with mozjs}
-BuildRequires:	pkgconfig(mozjs-60)
+BuildRequires:	pkgconfig(mozjs-52)
 %endif
 
 %description

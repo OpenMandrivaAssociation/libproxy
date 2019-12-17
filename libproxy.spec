@@ -42,9 +42,11 @@ Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
-Patch0:         libproxy-0.4.15-python3738.patch
+Patch0:		libproxy-0.4.15-python3738.patch
 # https://github.com/libproxy/libproxy/pull/86
-Patch1:         libproxy-0.4.15-mozjs52.patch
+Patch1:		libproxy-0.4.15-mozjs52.patch
+# https://github.com/libproxy/libproxy/pull/95
+Patch2:		libproxy-0.4.15-mozjs60.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
 %if %{with python}
@@ -79,7 +81,7 @@ BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
 %if %{with mozjs}
-BuildRequires:	pkgconfig(mozjs-52)
+BuildRequires:	pkgconfig(mozjs-60)
 %endif
 
 %description
@@ -100,7 +102,7 @@ Obsoletes:	libproxy-mozjs < 0.4.6-3
 Obsoletes:	libproxy-webkit < 0.4.6-3
 Provides:	libproxy-pac = %{version}-%{release}
 
-%description -n	%{libname}
+%description -n %{libname}
 libproxy offers the following features:
 
     * extremely small core footprint (< 35K)
@@ -208,7 +210,7 @@ Group:		Development/C
 Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
 
-%description -n	%{devname}
+%description -n %{devname}
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
@@ -253,9 +255,9 @@ developing applications that use %{name}.
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
 #check
-#pushd build
+#cd build
 #ctest .
-#popd
+#cd -
 
 %files -n %{libname}
 %{_libdir}/libproxy.so.%{major}*

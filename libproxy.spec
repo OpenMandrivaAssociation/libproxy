@@ -9,7 +9,6 @@
 %bcond_with gnome3
 %bcond_with dotnet
 %bcond_with kde
-%bcond_with mozjs
 %bcond_with natus
 %bcond_with networkmanager
 %bcond_with perl
@@ -23,7 +22,6 @@
 %bcond_without gnome3
 %bcond_with dotnet
 %bcond_without kde
-%bcond_without mozjs
 %bcond_with natus
 %bcond_without networkmanager
 %bcond_without perl
@@ -36,17 +34,12 @@
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.15
-Release:	7
+Version:	0.4.16
+Release:	1
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
-Patch0:		libproxy-0.4.15-python3738.patch
-# https://github.com/libproxy/libproxy/pull/86
-Patch1:		libproxy-0.4.15-mozjs52.patch
-# https://github.com/libproxy/libproxy/pull/95
-Patch2:		libproxy-0.4.15-mozjs60.patch
 BuildRequires:	cmake
 %if %{with python}
 BuildRequires:	pkgconfig(python)
@@ -79,9 +72,6 @@ BuildRequires:	pkgconfig(webkit-1.0)
 BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
 %endif
-%if %{with mozjs}
-BuildRequires:	pkgconfig(mozjs-60)
-%endif
 
 %description
 libproxy offers the following features:
@@ -97,7 +87,7 @@ libproxy offers the following features:
 %package -n %{libname}
 Group:		System/Libraries
 Summary:	A library handling all the details of proxy configuration
-Obsoletes:	libproxy-mozjs < 0.4.6-3
+Obsoletes:	%{_lib}proxy-mozjs < %{EVRD}
 Obsoletes:	libproxy-webkit < 0.4.6-3
 Provides:	libproxy-pac = %{version}-%{release}
 
@@ -192,17 +182,6 @@ Requires:	%{libname} = %{EVRD}
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
 
-%if %{with mozjs}
-%package mozjs
-Summary:	Plugin for %{name} and mozjs
-Group:		System/Libraries
-Requires:	%{libname} = %{EVRD}
-
-%description mozjs
-The %{name}-mozjs package contains the %{name} plugin for
-mozjs.
-%endif
-
 %package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
@@ -237,7 +216,7 @@ developing applications that use %{name}.
 	-DWITH_PYTHON2:BOOL=%{with python2} \
 	-DWITH_PYTHON3:BOOL=%{with python} \
 	-DWITH_VALA:BOOL=%{with vala} \
-	-DWITH_MOZJS:BOOL=%{with mozjs} \
+	-DWITH_MOZJS:BOOL=OFF \
 	-DWITH_WEBKIT:BOOL=%{with webkit1} \
 	-DWITH_WEBKIT3:BOOL=%{with webkit} \
 	-DWITH_NATUS:BOOL=%{with natus} \
@@ -309,11 +288,6 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %if %{with webkit1} || %{with webkit}
 %files webkit
 %{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
-%endif
-
-%if %{with mozjs}
-%files mozjs
-%{_libdir}/%{name}/%{version}/modules/pacrunner_mozjs.so
 %endif
 
 %if %{with vala}

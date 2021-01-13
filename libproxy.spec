@@ -25,7 +25,7 @@
 %bcond_with natus
 %bcond_without networkmanager
 %bcond_without perl
-%bcond_without python2
+%bcond_with python2
 %bcond_without python
 %bcond_without vala
 %bcond_with webkit1
@@ -34,7 +34,7 @@
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.16
+Version:	0.4.17
 Release:	1
 Group:		System/Libraries
 License:	LGPLv2+

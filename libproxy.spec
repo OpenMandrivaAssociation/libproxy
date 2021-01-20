@@ -71,7 +71,7 @@ BuildRequires:	pkgconfig(webkit-1.0)
 %endif
 %if %{with webkit}
 BuildRequires:	pkgconfig(webkitgtk-3.0)
-BuildRequires: 	pkgconfig(javascriptcoregtk-4.0)
+BuildRequires:	pkgconfig(javascriptcoregtk-4.0)
 %endif
 
 %description
@@ -183,6 +183,14 @@ Requires:	%{libname} = %{EVRD}
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
 
+%package pacrunner
+Summary:	Plugin for %{name} and PacRunner
+Requires:	%{libname} = %{EVRD}
+
+%description pacrunner
+The %{name}-pacrunner package contains the %{name} plugin for
+PacRunner.
+
 %package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
@@ -290,6 +298,9 @@ sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*
 %files webkit
 %{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
 %endif
+
+%files pacrunner
+%{_libdir}/%{name}/%{version}/modules/config_pacrunner.so
 
 %if %{with vala}
 %files -n vala-%{name}

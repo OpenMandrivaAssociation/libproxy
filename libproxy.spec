@@ -2,6 +2,7 @@
 %define libname %mklibname proxy %{major}
 %define devname %mklibname -d proxy
 %define _disable_lto 1
+%define _disable_ld_no_undefined 1
 %bcond_with bootstrap
 
 %if %{with bootstrap}

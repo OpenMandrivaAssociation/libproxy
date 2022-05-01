@@ -85,6 +85,8 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
+#---------------------------------------------------------------------------
+
 %package -n %{libname}
 Group:		System/Libraries
 Summary:	A library handling all the details of proxy configuration
@@ -103,6 +105,14 @@ libproxy offers the following features:
     * a standard way of dealing with proxy settings across all scenarios
     * a sublime sense of joy and accomplishment 
 
+%files -n %{libname}
+%{_libdir}/libproxy.so.%{major}*
+%dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/%{version}
+%dir %{_libdir}/%{name}/%{version}/modules
+
+#---------------------------------------------------------------------------
+
 %package utils
 Summary:	Binary to test %{name}
 Group:		System/Configuration/Networking
@@ -110,6 +120,12 @@ Group:		System/Configuration/Networking
 %description utils
 The %{name}-utils package contains the proxy binary for %{name}.
 
+%files utils
+%{_bindir}/proxy
+
+#---------------------------------------------------------------------------
+
+%if %{with python}
 %package -n python-%{name}
 Summary:	Binding for %{name} and python
 Group:		Development/Python
@@ -118,6 +134,14 @@ Requires:	%{libname} = %{EVRD}
 %description -n python-%{name}
 The python-%{name} package contains the python binding for %{name}.
 
+%files -n python-%{name}
+%{python_sitelib}/libproxy.py
+#{python_sitelib}/__pycache__/*
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with python2}
 %package -n python2-%{name}
 Summary:	Binding for %{name} and python 2.x
 Group:		Development/Python
@@ -125,6 +149,12 @@ Requires:	%{libname} = %{EVRD}
 
 %description -n python2-%{name}
 The python2-%{name} package contains the python 2.x binding for %{name}.
+
+%files -n python2-%{name}
+%{py2_puresitedir}/libproxy.py*
+%endif
+
+#---------------------------------------------------------------------------
 
 %package -n vala-%{name}
 Summary:	Binding for %{name} and vala
@@ -134,6 +164,14 @@ Requires:	%{libname} = %{EVRD}
 %description -n vala-%{name}
 The vala-%{name} package contains the vala binding for %{name}.
 
+%if %{with vala}
+%files -n vala-%{name}
+%{_datadir}/vala/vapi/libproxy-1.0.vapi
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with perl}
 %package perl
 Summary:	Perl bindings for %{name}
 Group:		Development/Perl
@@ -142,6 +180,14 @@ Requires:	%{libname} = %{EVRD}
 %description perl
 This contains the perl bindings for the libproxy library.
 
+%files perl
+%{perl_vendorarch}/Net/Libproxy.pm
+%{perl_vendorarch}/auto/Net/Libproxy
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with dotnet}
 %package dotnet
 Summary:	.NET bindings for %{name}
 Group:		Development/Other
@@ -150,6 +196,15 @@ Requires:	%{libname} = %{EVRD}
 %description dotnet
 This contains the .NET bindings for the libproxy library.
 
+%files dotnet
+%{_prefix}/lib/mono/gac/libproxy-sharp
+%{_prefix}/lib/mono/libproxy-sharp
+%{_libdir}/pkgconfig/libproxy-sharp-1.0.pc
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with gnome3}
 %package gnome
 Summary:	Plugin for %{name} and gnome
 Group:		System/Libraries
@@ -157,6 +212,14 @@ Group:		System/Libraries
 %description gnome
 The %{name}-gnome package contains the %{name} plugin for gnome.
 
+%files gnome
+%{_libdir}/%{name}/%{version}/modules/config_gnome3.so
+%{_libexecdir}/pxgsettings
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with kde}
 %package kde
 Summary:	Plugin for %{name} and kde
 Group:		System/Libraries
@@ -165,6 +228,13 @@ Requires:	kconfig
 %description kde
 The %{name}-kde package contains the %{name} plugin for kde.
 
+%files kde
+%{_libdir}/%{name}/%{version}/modules/config_kde.so
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with networkmanager}
 %package networkmanager
 Summary:	Plugin for %{name} and networkmanager
 Group:		System/Libraries
@@ -174,6 +244,13 @@ Requires:	%{libname} = %{EVRD}
 The %{name}-networkmanager package contains the %{name} plugin for
 networkmanager.
 
+%files networkmanager
+%{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with webkit1} || %{with webkit}
 %package webkit
 Summary:	Plugin for %{name} and webkit
 Group:		System/Libraries
@@ -183,6 +260,12 @@ Requires:	%{libname} = %{EVRD}
 The %{name}-webkit package contains the %{name} plugin for
 webkit.
 
+%files webkit
+%{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
+%endif
+
+#---------------------------------------------------------------------------
+
 %package pacrunner
 Summary:	Plugin for %{name} and PacRunner
 Requires:	%{libname} = %{EVRD}
@@ -190,6 +273,11 @@ Requires:	%{libname} = %{EVRD}
 %description pacrunner
 The %{name}-pacrunner package contains the %{name} plugin for
 PacRunner.
+
+%files pacrunner
+%{_libdir}/%{name}/%{version}/modules/config_pacrunner.so
+
+#---------------------------------------------------------------------------
 
 %package -n %{devname}
 Summary:	Development files for %{name}
@@ -200,6 +288,15 @@ Provides:	%{name}-devel = %{EVRD}
 %description -n %{devname}
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
+
+%files -n %{devname}
+%doc AUTHORS README
+%{_includedir}/proxy.h
+%{_libdir}/*.so
+%{_libdir}/pkgconfig/libproxy-1.0.pc
+%{_datadir}/cmake/Modules/Findlibproxy.cmake
+
+#---------------------------------------------------------------------------
 
 %prep
 %autosetup -p1
@@ -240,76 +337,8 @@ developing applications that use %{name}.
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
-#check
+%check
 #cd build
 #ctest .
 #cd -
 
-%files -n %{libname}
-%{_libdir}/libproxy.so.%{major}*
-%dir %{_libdir}/%{name}
-%dir %{_libdir}/%{name}/%{version}
-%dir %{_libdir}/%{name}/%{version}/modules
-
-%files utils
-%{_bindir}/proxy
-
-%if %{with python}
-%files -n python-%{name}
-%{python_sitelib}/libproxy.py
-%{python_sitelib}/__pycache__/*
-%endif
-
-%if %{with python2}
-%files -n python2-%{name}
-%{py2_puresitedir}/libproxy.py*
-%endif
-
-%if %{with perl}
-%files perl
-%{perl_vendorarch}/Net/Libproxy.pm
-%{perl_vendorarch}/auto/Net/Libproxy
-%endif
-
-%if %{with dotnet}
-%files dotnet
-%{_prefix}/lib/mono/gac/libproxy-sharp
-%{_prefix}/lib/mono/libproxy-sharp
-%{_libdir}/pkgconfig/libproxy-sharp-1.0.pc
-%endif
-
-%if %{with gnome3}
-%files gnome
-%{_libdir}/%{name}/%{version}/modules/config_gnome3.so
-%{_libexecdir}/pxgsettings
-%endif
-
-%if %{with kde}
-%files kde
-%{_libdir}/%{name}/%{version}/modules/config_kde.so
-%endif
-
-%if %{with networkmanager}
-%files networkmanager
-%{_libdir}/%{name}/%{version}/modules/network_networkmanager.so
-%endif
-
-%if %{with webkit1} || %{with webkit}
-%files webkit
-%{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
-%endif
-
-%files pacrunner
-%{_libdir}/%{name}/%{version}/modules/config_pacrunner.so
-
-%if %{with vala}
-%files -n vala-%{name}
-%{_datadir}/vala/vapi/libproxy-1.0.vapi
-%endif
-
-%files -n %{devname}
-%doc AUTHORS README
-%{_includedir}/proxy.h
-%{_libdir}/*.so
-%{_libdir}/pkgconfig/libproxy-1.0.pc
-%{_datadir}/cmake/Modules/Findlibproxy.cmake

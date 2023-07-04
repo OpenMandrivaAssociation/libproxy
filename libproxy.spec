@@ -35,12 +35,12 @@
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
-Version:	0.4.18
-Release:	2
+Version:	0.5.2
+Release:	1
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
-Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
+Source0:	https://github.com/libproxy/libproxy/archive/%{version}/%{name}-%{version}.tar.gz
 BuildRequires:	cmake
 %if %{with python}
 BuildRequires:	pkgconfig(python)

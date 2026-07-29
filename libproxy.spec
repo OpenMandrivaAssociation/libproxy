@@ -27,7 +27,8 @@
 %bcond_without networkmanager
 %bcond_without perl
 %bcond_with python2
-%bcond_without python
+%bcond_with python
+  # disabled: distutils removed in py3.12+
 %bcond_without vala
 %bcond_with webkit1
 %bcond_with webkit
@@ -36,7 +37,7 @@
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.18
-Release:	7
+Release:	8
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy

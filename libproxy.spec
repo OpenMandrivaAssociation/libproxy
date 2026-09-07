@@ -1,60 +1,82 @@
 %define major 1
-%define libname %mklibname proxy %{major}
+%define oldlibname %mklibname proxy 1
+%define libname %mklibname proxy
 %define devname %mklibname -d proxy
-%define _disable_lto 1
 %define _disable_ld_no_undefined 1
+# Size over speed. -Oz last so it wins over the default -Os/-O3 mix.
+%global optflags %{optflags} -Oz
 %bcond_with bootstrap
 
 %if %{with bootstrap}
-%bcond_with gnome2
 %bcond_with gnome3
 %bcond_with dotnet
 %bcond_with kde
 %bcond_with natus
 %bcond_with networkmanager
 %bcond_with perl
-%bcond_with python2
 %bcond_with python
 %bcond_with vala
-%bcond_with webkit1
 %bcond_with webkit
+%bcond_with duktape
 %else
-%bcond_without gnome2
 %bcond_without gnome3
 %bcond_with dotnet
 %bcond_without kde
 %bcond_with natus
 %bcond_without networkmanager
 %bcond_without perl
-%bcond_with python2
-%bcond_with python
-  # disabled: distutils removed in py3.12+
+%bcond_without python
 %bcond_without vala
-%bcond_with webkit1
 %bcond_with webkit
+%bcond_without duktape
 %endif
 
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.18
-Release:	8
+Release:	9
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
-BuildRequires:	cmake
+Patch0:		libproxy-0.4.18-python3-sysconfig.patch
+Patch1:		libproxy-0.4.18-kreadconfig6.patch
+
+BuildSystem:	cmake
+# BIPR=OFF so we dont end up requiring gtk/webkit just for the lib
+BuildOption:	-Dlibexecdir=%{_libexecdir}
+BuildOption:	-DLIBEXEC_INSTALL_DIR=%{_libexecdir}
+BuildOption:	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules
+BuildOption:	-DBIPR=OFF
+BuildOption:	-DWITH_PERL:BOOL=%{with perl}
+%if %{with perl}
+BuildOption:	-DPERL_VENDORINSTALL=1
+BuildOption:	-DPERL_LINK_LIBPERL=1
+%endif
+BuildOption:	-DWITH_GNOME2:BOOL=OFF
+BuildOption:	-DWITH_GNOME3:BOOL=%{with gnome3}
+BuildOption:	-DWITH_KDE:BOOL=%{with kde}
+BuildOption:	-DWITH_DOTNET:BOOL=%{with dotnet}
+BuildOption:	-DWITH_PYTHON2:BOOL=OFF
+BuildOption:	-DWITH_PYTHON3:BOOL=%{with python}
+%if %{with python}
+BuildOption:	-DPYTHON3_EXECUTABLE:FILEPATH=%{_bindir}/python
+BuildOption:	-DPYTHON3_SITEPKG_DIR=%{python_sitelib}
+%endif
+BuildOption:	-DWITH_VALA:BOOL=%{with vala}
+BuildOption:	-DWITH_MOZJS:BOOL=OFF
+BuildOption:	-DWITH_WEBKIT:BOOL=OFF
+BuildOption:	-DWITH_WEBKIT3:BOOL=%{with webkit}
+BuildOption:	-DWITH_DUKTAPE:BOOL=%{with duktape}
+BuildOption:	-DWITH_NATUS:BOOL=%{with natus}
+BuildOption:	-DWITH_NM:BOOL=%{with networkmanager}
+
 %if %{with python}
 BuildRequires:	pkgconfig(python)
-%endif
-%if %{with python2}
-BuildRequires:	pkgconfig(python2)
 %endif
 BuildRequires:	pkgconfig(zlib)
 %if %{with perl}
 BuildRequires:	perl-devel
-%endif
-%if %{with gnome2} || %{with gnome}
-BuildRequires:	pkgconfig(gconf-2.0)
 %endif
 %if %{with dotnet}
 BuildRequires:	pkgconfig(mono-cecil)
@@ -65,14 +87,13 @@ BuildRequires:	pkgconfig(natus)
 %if %{with networkmanager}
 BuildRequires:	pkgconfig(libnm)
 BuildRequires:	pkgconfig(dbus-1)
-BuildRequires:	pkgconfig(dbus-glib-1)
-%endif
-%if %{with webkit1}
-BuildRequires:	pkgconfig(webkit-1.0)
 %endif
 %if %{with webkit}
 BuildRequires:	pkgconfig(webkitgtk-3.0)
 BuildRequires:	pkgconfig(javascriptcoregtk-4.0)
+%endif
+%if %{with duktape}
+BuildRequires:	pkgconfig(duktape)
 %endif
 
 %description
@@ -91,8 +112,10 @@ libproxy offers the following features:
 %package -n %{libname}
 Group:		System/Libraries
 Summary:	A library handling all the details of proxy configuration
+%rename %{oldlibname}
 Obsoletes:	%{_lib}proxy-mozjs < %{EVRD}
 Obsoletes:	libproxy-webkit < 0.4.6-3
+Obsoletes:	python2-libproxy < %{EVRD}
 Provides:	libproxy-pac = %{version}-%{release}
 
 %description -n %{libname}
@@ -137,22 +160,6 @@ The python-%{name} package contains the python binding for %{name}.
 
 %files -n python-%{name}
 %{python_sitelib}/libproxy.py
-#{python_sitelib}/__pycache__/*
-%endif
-
-#---------------------------------------------------------------------------
-
-%if %{with python2}
-%package -n python2-%{name}
-Summary:	Binding for %{name} and python 2.x
-Group:		Development/Python
-Requires:	%{libname} = %{EVRD}
-
-%description -n python2-%{name}
-The python2-%{name} package contains the python 2.x binding for %{name}.
-
-%files -n python2-%{name}
-%{py2_puresitedir}/libproxy.py*
 %endif
 
 #---------------------------------------------------------------------------
@@ -224,7 +231,7 @@ The %{name}-gnome package contains the %{name} plugin for gnome.
 %package kde
 Summary:	Plugin for %{name} and kde
 Group:		System/Libraries
-Requires:	kconfig
+Requires:	kf6-kconfig
 
 %description kde
 The %{name}-kde package contains the %{name} plugin for kde.
@@ -251,7 +258,7 @@ networkmanager.
 
 #---------------------------------------------------------------------------
 
-%if %{with webkit1} || %{with webkit}
+%if %{with webkit}
 %package webkit
 Summary:	Plugin for %{name} and webkit
 Group:		System/Libraries
@@ -263,6 +270,22 @@ webkit.
 
 %files webkit
 %{_libdir}/%{name}/%{version}/modules/pacrunner_webkit.so
+%endif
+
+#---------------------------------------------------------------------------
+
+%if %{with duktape}
+%package duktape
+Summary:	Plugin for %{name} and Duktape
+Group:		System/Libraries
+Requires:	%{libname} = %{EVRD}
+
+%description duktape
+The %{name}-duktape package contains the %{name} PAC runner plugin
+using the Duktape JavaScript engine.
+
+%files duktape
+%{_libdir}/%{name}/%{version}/modules/pacrunner_duktape.so
 %endif
 
 #---------------------------------------------------------------------------
@@ -299,47 +322,7 @@ developing applications that use %{name}.
 
 #---------------------------------------------------------------------------
 
-%prep
-%autosetup -p1
-
-# BIPR=OFF so we dont end up requiring gtk/webkit just for the lib
-%cmake \
-	-Dlibexecdir=%{_libexecdir} \
-	-DLIBEXEC_INSTALL_DIR=%{_libexecdir} \
-	-DMODULE_INSTALL_DIR=%{_libdir}/%{name}/%{version}/modules \
-	-DBIPR=OFF \
-	-DWITH_PERL:BOOL=%{with perl} \
-%if %{with perl}
-	-DPERL_VENDORINSTALL=1 \
-	-DPERL_LINK_LIBPERL=1 \
-%endif
-%if %{with python2}
-	-DPYTHON2_EXECUTABLE:FILEPATH=%{_bindir}/python2 \
-%endif
-	-DWITH_GNOME2:BOOL=%{with gnome2} \
-	-DWITH_GNOME3:BOOL=%{with gnome3} \
-	-DWITH_KDE:BOOL=%{with kde} \
-	-DWITH_DOTNET:BOOL=%{with dotnet} \
-	-DWITH_PYTHON2:BOOL=%{with python2} \
-	-DWITH_PYTHON3:BOOL=%{with python} \
-	-DWITH_VALA:BOOL=%{with vala} \
-	-DWITH_MOZJS:BOOL=OFF \
-	-DWITH_WEBKIT:BOOL=%{with webkit1} \
-	-DWITH_WEBKIT3:BOOL=%{with webkit} \
-	-DWITH_NATUS:BOOL=%{with natus} \
-	-DWITH_NM:BOOL=%{with networkmanager}
-
-%build
-%make_build -C build
-
-%install
-%make_install -C build
-
+%install -a
 #gw fix pkgconfig file
 sed -i -e "s^Version:.*^Version: %{version}^" %{buildroot}%{_libdir}/pkgconfig/*.pc
-
-%check
-#cd build
-#ctest .
-#cd -
 

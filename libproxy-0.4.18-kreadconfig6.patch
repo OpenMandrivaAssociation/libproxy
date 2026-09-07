@@ -1,0 +1,58 @@
+Prefer kreadconfig6 (KF6/Plasma 6) when reading KDE proxy settings.
+Keep kreadconfig5 and kreadconfig as fallbacks if KF6 is not present.
+
+diff -Nru libproxy-0.4.18.orig/libproxy/cmake/modules/config_kde.cmk libproxy-0.4.18/libproxy/cmake/modules/config_kde.cmk
+--- libproxy-0.4.18.orig/libproxy/cmake/modules/config_kde.cmk	2020-12-15 12:26:48.000000000 +0100
++++ libproxy-0.4.18/libproxy/cmake/modules/config_kde.cmk	2026-09-07 19:34:05.776253883 +0200
+@@ -1,4 +1,4 @@
+-option(WITH_KDE "Build module to read proxy settings from KDE4/KF5" ON)
++option(WITH_KDE "Build module to read proxy settings from KDE4/KF5/KF6" ON)
+ 
+-# There are no additional detections; kreadconfig (from KDE4) and kreadconfig5
+-# (from KF5) are only needed at runtime.
++# There are no additional detections; kreadconfig6 (from KF6), kreadconfig5
++# (from KF5) and kreadconfig (from KDE4) are only needed at runtime.
+diff -Nru libproxy-0.4.18.orig/libproxy/modules/config_kde.cpp libproxy-0.4.18/libproxy/modules/config_kde.cpp
+--- libproxy-0.4.18.orig/libproxy/modules/config_kde.cpp	2022-06-20 15:54:49.000000000 +0200
++++ libproxy-0.4.18/libproxy/modules/config_kde.cpp	2026-09-07 19:34:05.776157551 +0200
+@@ -42,7 +42,21 @@
+         : cache_time(0)
+     {
+         try {
+-            // Try the KF5 one first
++            // Try the KF6 one first
++            command = "kreadconfig6";
++            command_output("kreadconfig6 --key nonexistant");
++
++            try {
++                use_xdg_config_dirs();
++            }
++            catch(...) {}
++
++            return; // Worked
++        }
++        catch(...) {}
++
++        try {
++            // Try the KF5 one next
+             command = "kreadconfig5";
+             command_output("kreadconfig5 --key nonexistant");
+ 
+@@ -56,7 +70,7 @@
+         catch(...) {}
+ 
+         try {
+-            // The KDE4 one next
++            // The KDE4 one last
+             command = "kreadconfig";
+             command_output(command);
+ 
+@@ -253,7 +267,7 @@
+         return needs_refresh;
+     }
+ 
+-    // Whether to use kreadconfig or kreadconfig5
++    // Whether to use kreadconfig6, kreadconfig5 or kreadconfig
+     string command;
+     // When the cache was flushed last
+     time_t cache_time;

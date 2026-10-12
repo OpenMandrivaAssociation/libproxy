@@ -1,0 +1,2 @@
+# Mono's GAC is /usr/lib/mono, including on 64-bit.
+addFilter("hardcoded-library-path")

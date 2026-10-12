@@ -39,6 +39,7 @@ Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
 Source0:	https://codeload.github.com/libproxy/libproxy/%{name}-%{version}.tar.xz
+Source1:	libproxy.rpmlintrc
 Patch0:		libproxy-0.4.18-python3-sysconfig.patch
 Patch1:		libproxy-0.4.18-kreadconfig6.patch
 

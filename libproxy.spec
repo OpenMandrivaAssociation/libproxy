@@ -34,7 +34,7 @@
 Summary:	A library handling all the details of proxy configuration
 Name:		libproxy
 Version:	0.4.18
-Release:	9
+Release:	10
 Group:		System/Libraries
 License:	LGPLv2+
 Url:		https://github.com/libproxy/libproxy
